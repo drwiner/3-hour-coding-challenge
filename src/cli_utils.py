@@ -8,6 +8,7 @@ class Config:
     input_csv: str
     target_col: str
     directory: str
+    inference_directory: str
     log_level: str
     do_eval: bool = False
 
@@ -30,6 +31,7 @@ def coerce_dataframe(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
 
     Args:
         df (pd.DataFrame): Input dataframe.
+        target_col (str): Target column.
 
     Returns:
         pd.DataFrame: Coerced dataframe.

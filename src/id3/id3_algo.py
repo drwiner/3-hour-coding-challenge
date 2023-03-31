@@ -22,10 +22,10 @@ class DecisionTreeNode:
             "children": {str(key): value.to_dict() for key, value in self.children.items()},
         }
 
-    def from_dict(self, json: dict):
+    @classmethod
+    def from_dict(cls, json: dict):
         """ Converts JSON to DecisionTreeNode """
-        self.value = json["value"]
-        self.children = {key: DecisionTreeNode.from_dict(value) for key, value in json["children"].items()}
+        return DecisionTreeNode(json["value"], {key: DecisionTreeNode.from_dict(value) for key, value in json["children"].items()})
 
     def print(self):
         pprint.pprint(self.to_dict(), indent=4)

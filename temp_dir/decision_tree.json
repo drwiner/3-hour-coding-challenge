@@ -1,0 +1,26 @@
+{
+    "children": {
+        "0": {
+            "children": {},
+            "value": "snake"
+        },
+        "2": {
+            "children": {},
+            "value": "parrot"
+        },
+        "4": {
+            "children": {
+                "Black": {
+                    "children": {},
+                    "value": "monkey"
+                },
+                "Yellow": {
+                    "children": {},
+                    "value": "lion"
+                }
+            },
+            "value": "Color"
+        }
+    },
+    "value": "Number of legs"
+}
