@@ -4,44 +4,10 @@ import pandas as pd
 import logging
 from src.id3 import id3_algo
 import json
+from src.cli_utils import Config, do_check_on_input, coerce_dataframe
 
 
-# from observations import FeatureType
-#
-#
-# REQUIRED_COLS = {
-#     'Name': FeatureType.ANIMAL,
-#     'Number of legs': FeatureType.NUM_LEGS,
-#     'Color': FeatureType.COLOR
-# }
-
-
-def do_check_on_input(input_df: pd.DataFrame) -> None:
-    """Do some checks on the input dataframe
-
-    Args:
-        input_df (pd.DataFrame): Input whose columns we have to check.
-
-    Raises:
-        ValueError: If the input dataframe does not have the required columns or is empty.
-    """
-    if input_df.empty:
-        raise ValueError('Input dataframe is empty.')
-
-    # if not all(col in input_df.columns for col in REQUIRED_COLS.keys()):
-    #     raise ValueError('Input dataframe does not have the required columns.')
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Training script entry point. You should only include columns which are either target (marked) or feature columns.')
-    parser.add_argument('--input_csv', type=str, help='Input csv file.')
-    parser.add_argument('--target_col', type=str, required=False, default="Name", help='Target column name.')
-    parser.add_argument('--directory', type=str, help='Directory for artifacts, logs, and model, etc.')
-    parser.add_argument("--log_level", type=str, default="INFO", help="Logging level (default: INFO).")
-
-    args = parser.parse_args()
-
+def main(args: Config):
     # Set log level
     logging.basicConfig(level=args.log_level)
 
@@ -58,13 +24,44 @@ if __name__ == "__main__":
     input_file = os.path.join(args.directory, 'input.csv')
     df.to_csv(input_file, index=False)
 
+    # Coerce the dataframe to the required format. Might do nothing if your inputs are all string.
+    logging.info("Coercing dataframe to all string")
+    df = coerce_dataframe(df, args.target_col)
+    coerced_file = os.path.join(args.directory, 'coerced.csv')
+    df.to_csv(coerced_file, index=False)
+
     # Run training
+    logging.info("Running Training")
     decision_tree = id3_algo.id3_algo(data=df,
                                       feature_cols=[col for col in df.columns if col != args.target_col],
                                       target_col=args.target_col
                                       )
 
     # Save the decision tree to the directory.
-    decision_tree_file = os.path.join(args.directory, 'decision_tree.txt')
+    logging.info("Saving decision Tree")
+    decision_tree_file = os.path.join(args.directory, 'decision_tree.json')
     with open(decision_tree_file, 'w') as f:
         f.write(json.dumps(decision_tree.to_dict(), indent=4, sort_keys=True))
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Training script entry point. \
+        You should only include columns which are either target (marked) or feature columns.\
+        All values will be interpreted as String! TODO: support other data types! lol')
+
+    parser.add_argument('--input_csv', type=str, help='Input csv file.')
+    parser.add_argument('--target_col', type=str, required=False, default="Name", help='Target column name.')
+    parser.add_argument('--directory', type=str, help='Directory for artifacts, logs, and model, etc.')
+    parser.add_argument("--log_level", type=str, default="INFO", help="Logging level (default: INFO).")
+
+    args = parser.parse_args()
+
+    # Create config object from args
+    config = Config(input_csv=args.input_csv,
+                    target_col=args.target_col,
+                    directory=args.directory,
+                    log_level=args.log_level)
+
+    main(config)
+

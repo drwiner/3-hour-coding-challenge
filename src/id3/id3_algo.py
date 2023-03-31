@@ -1,10 +1,11 @@
 """ ID3 Algorithm implementation """
-
-import pandas as pd
-import src.id3.id3_helper as helper
-from dataclasses import dataclass, field
+import logging
 import pprint
-import json
+from dataclasses import dataclass, field
+from typing import Dict
+import pandas as pd
+
+import src.id3.id3_helper as helper
 
 
 @dataclass
@@ -17,8 +18,8 @@ class DecisionTreeNode:
     def to_dict(self) -> dict:
         """ Converts DecisionTreeNode to JSON """
         return {
-            "value": self.value,
-            "children": {key: value.to_dict() for key, value in self.children.items()},
+            "value": str(self.value),
+            "children": {str(key): value.to_dict() for key, value in self.children.items()},
         }
 
     def from_dict(self, json: dict):
@@ -34,7 +35,6 @@ class DecisionTreeNode:
 
     def __repr__(self):
         return self.__str__()
-
 
 
 def id3_algo(data, feature_cols, target_col) -> DecisionTreeNode:
@@ -72,16 +72,47 @@ def id3_algo(data, feature_cols, target_col) -> DecisionTreeNode:
         )
     return new_node
 
+
+def use_tree(datum: Dict[str, str], decision_tree: DecisionTreeNode) -> str:
+    """ Use tree to predict classification for new data """
+    if len(decision_tree.children) == 0:
+        return decision_tree.value
+
+    if decision_tree.value not in datum:
+        logging.warning("Could not find feature %s in datum", decision_tree.value)
+        return "No Classification Found"
+
+    datum_value = datum[decision_tree.value]
+
+    for feature_val, sub_tree in decision_tree.children.items():
+        if datum_value == feature_val:
+            return use_tree(datum, sub_tree)
+
+    # If we're here, then there was no ob serv
+    # Just pick first sub_tree
+    logging.warning(f"Never observed feature value {datum_value} in column {decision_tree.value}.\
+        \nPicking first sub-tree")
+
+    # To make deterministic, sort keys
+    sorted_keys = sorted(decision_tree.children.keys())
+    sub_tree = decision_tree.children[sorted_keys[0]]
+    return use_tree(datum, sub_tree)
+
+
 if __name__ == "__main__":
     # Test id3 algorithm
 
     df = pd.DataFrame(
         {
             "Name": ["cat", "cat", "cat", "dog", "dog", "dog", "giraffe", "zebra", "chicken", "duck", "cow", "bird"],
-            "num_legs": [4, 4, 4, 4, 4, 4, 4, 2, 4, 4, 4, 2],
+            "num_legs": ["4", "4", "4", "4", "4", "4", "4", "2", "4", "4", "4", "2"],
             "color": ["white", "black", "black", "black", "black", "white", "white", "white", "white", "white", "white", "white"]
         }
     )
 
-    id3_algo(df, ["num_legs", "color"], "Name").print()
-    print(id3_algo(df, ["num_legs", "color"], "Name"))
+    tree = id3_algo(df, ["num_legs", "color"], "Name")
+    tree.print()
+    print(tree)
+
+    df.loc[:, "predicted"] = df.apply(lambda row: use_tree(row, tree), axis=1)
+    print(df)
