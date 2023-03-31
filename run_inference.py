@@ -54,9 +54,12 @@ def main(config: Config):
         # For each value of target col, there is precision, recall, and f1
         target_values = test_df[config.target_col].unique()
         for target_value in target_values:
-            true_positives = test_df.loc[(test_df[config.target_col] == target_value) & (test_df["prediction"] == target_value)].shape[0]
-            false_positives = test_df.loc[(test_df[config.target_col] != target_value) & (test_df["prediction"] == target_value)].shape[0]
-            false_negatives = test_df.loc[(test_df[config.target_col] == target_value) & (test_df["prediction"] != target_value)].shape[0]
+            true_positives = test_df.loc[(test_df[config.target_col] == target_value)
+                                         & (test_df["prediction"] == target_value)].shape[0]
+            false_positives = test_df.loc[(test_df[config.target_col] != target_value)
+                                          & (test_df["prediction"] == target_value)].shape[0]
+            false_negatives = test_df.loc[(test_df[config.target_col] == target_value)
+                                          & (test_df["prediction"] != target_value)].shape[0]
 
             if true_positives + false_positives == 0:
                 precision = 0

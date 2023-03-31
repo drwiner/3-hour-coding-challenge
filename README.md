@@ -34,7 +34,7 @@ python run_inference.py -h
 ```
 
 
-#### Run inference with evaluation if target column is available (TODO, 15 mins left?)
+#### Run inference with evaluation if target column is available
 ```
 python run_inference.py --input_csv resources/test.csv --model_dir temp_dir --do_eval
 ```
@@ -44,4 +44,4 @@ python run_inference.py --input_csv resources/test.csv --model_dir temp_dir --do
 pytest tests/test_run_training.py::test_main
 ```
 
-TODO: run inference, run end to end.
+TODO: testing for inference and "end to end".
