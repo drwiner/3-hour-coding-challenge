@@ -9,6 +9,7 @@ import pandas as pd
 
 from run_training import Config, coerce_dataframe, do_check_on_input
 
+
 def main(config: Config):
     """ Main function for running inference. """
 
@@ -47,10 +48,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Create config object from args
-    config = Config(input_csv=args.test_csv,
-                    target_col=args.target_col,
-                    directory=args.directory,
-                    log_level=args.log_level,
-                    do_eval=False)
+    input_config = Config(input_csv=args.test_csv,
+                          target_col=args.target_col,
+                          directory=args.directory,
+                          log_level=args.log_level,
+                          do_eval=False)
 
-    main(config)
+    main(input_config)

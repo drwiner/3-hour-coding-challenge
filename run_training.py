@@ -55,13 +55,13 @@ if __name__ == "__main__":
     parser.add_argument('--directory', type=str, help='Directory for artifacts, logs, and model, etc.')
     parser.add_argument("--log_level", type=str, default="INFO", help="Logging level (default: INFO).")
 
-    args = parser.parse_args()
+    input_args = parser.parse_args()
 
     # Create config object from args
-    config = Config(input_csv=args.input_csv,
-                    target_col=args.target_col,
-                    directory=args.directory,
-                    log_level=args.log_level)
+    config = Config(input_csv=input_args.input_csv,
+                    target_col=input_args.target_col,
+                    directory=input_args.directory,
+                    log_level=input_args.log_level)
 
     main(config)
 
