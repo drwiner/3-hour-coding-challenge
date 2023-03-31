@@ -39,7 +39,7 @@ def main(config: Config):
     logging.info(test_df.head())
 
     # Save dataframe to output directory
-    output_file = os.path.join(config.directory, 'output.csv')
+    output_file = os.path.join(config.inference_directory, 'output.csv')
     test_df.to_csv(output_file, index=False)
 
 if __name__ == "__main__":
@@ -50,16 +50,21 @@ if __name__ == "__main__":
     parser.add_argument('--test_csv', type=str, help='Test csv file.')
     parser.add_argument('--do_eval', action="store_true", help='Run evaluation with target column')
     parser.add_argument('--model_dir', type=str, help='Directory of model to use for inference.')
-    parser.add_argument("--out_dir", type=str, help="Directory for output.")
+    parser.add_argument("--out_dir", type=str, default=None, help="Directory for output.")
     parser.add_argument("--target_col", type=str, default="Name", help="Target col, used for formatting and evaluation.")
     parser.add_argument("--log_level", type=str, default="INFO", help="Logging level (default: INFO).")
 
     args = parser.parse_args()
 
+    if not args.out_dir:
+        # By default, we'll just save it in the model directory
+        args.out_dir = args.model_dir
+
     # Create config object from args
     input_config = Config(input_csv=args.test_csv,
                           target_col=args.target_col,
                           directory=args.model_dir,
+                          inference_directory=args.out_dir,
                           log_level=args.log_level,
                           do_eval=False)
 

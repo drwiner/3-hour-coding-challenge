@@ -8,8 +8,8 @@ class Config:
     input_csv: str
     target_col: str
     directory: str
-    inference_directory: str
     log_level: str
+    inference_directory: str = None
     do_eval: bool = False
 
 
