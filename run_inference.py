@@ -20,6 +20,9 @@ def main(config: Config):
     if not os.path.exists(config.directory):
         os.makedirs(config.directory)
 
+    if not os.path.exists(config.inference_directory):
+        os.makedirs(config.inference_directory)
+
     # Load test dataframe
     test_df = pd.read_csv(config.input_csv)
 
@@ -41,6 +44,37 @@ def main(config: Config):
     # Save dataframe to output directory
     output_file = os.path.join(config.inference_directory, 'output.csv')
     test_df.to_csv(output_file, index=False)
+
+    if config.do_eval:
+        # Evaluate the model. These are probably wrong!
+        logging.info("Evaluating model")
+        accuracy = test_df.loc[test_df[config.target_col] == test_df["prediction"]].shape[0] / test_df.shape[0]
+        logging.info(f"Accuracy: {accuracy}")
+
+        # For each value of target col, there is precision, recall, and f1
+        target_values = test_df[config.target_col].unique()
+        for target_value in target_values:
+            true_positives = test_df.loc[(test_df[config.target_col] == target_value) & (test_df["prediction"] == target_value)].shape[0]
+            false_positives = test_df.loc[(test_df[config.target_col] != target_value) & (test_df["prediction"] == target_value)].shape[0]
+            false_negatives = test_df.loc[(test_df[config.target_col] == target_value) & (test_df["prediction"] != target_value)].shape[0]
+
+            if true_positives + false_positives == 0:
+                precision = 0
+            else:
+                precision = true_positives / (true_positives + false_positives)
+
+            if (true_positives + false_negatives) == 0:
+                recall = 0
+            else:
+                recall = true_positives / (true_positives + false_negatives)
+
+            if (precision + recall) == 0:
+                f1 = 0
+            else:
+                f1 = 2 * (precision * recall) / (precision + recall)
+
+            logging.info(f"Target: {target_value}\tPrecision: {precision}, Recall: {recall}, F1: {f1}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -66,6 +100,6 @@ if __name__ == "__main__":
                           directory=args.model_dir,
                           inference_directory=args.out_dir,
                           log_level=args.log_level,
-                          do_eval=False)
+                          do_eval=args.do_eval)
 
     main(input_config)

@@ -24,11 +24,6 @@ python run_training.py --input_csv resources/animals.csv --directory temp_dir --
 python run_training.py -h
 ```
 
-### Test:
-```commandline
-pytest tests/test_run_training.py::test_main
-```
-
 ## Inference:
 ```
 python run_inference.py --test_csv resources/animals.csv --model_dir temp_dir --out_dir output_dir 
@@ -43,3 +38,10 @@ python run_inference.py -h
 ```
 python run_inference.py --input_csv resources/test.csv --model_dir temp_dir --do_eval
 ```
+
+# Test:
+```commandline
+pytest tests/test_run_training.py::test_main
+```
+
+TODO: run inference, run end to end.
