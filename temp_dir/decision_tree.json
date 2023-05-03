@@ -2,21 +2,25 @@
     "children": {
         "0": {
             "children": {},
-            "value": "snake"
+            "value": "snake",
+            "conf": 1.0
         },
         "2": {
             "children": {},
-            "value": "parrot"
+            "value": "parrot",
+            "conf": 1.0
         },
         "4": {
             "children": {
                 "Black": {
                     "children": {},
-                    "value": "monkey"
+                    "value": "monkey",
+                    "conf": 0.5
                 },
                 "Yellow": {
                     "children": {},
-                    "value": "lion"
+                    "value": "lion",
+                    "conf": 1.0
                 }
             },
             "value": "Color"
