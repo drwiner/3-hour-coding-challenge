@@ -13,6 +13,7 @@ class DecisionTreeNode:
     """ Decision Tree Node """
     value: str
     children: dict[str, "DecisionTreeNode"] = field(default_factory=dict)
+    confidence: float = 1.0
 
     # To dict
     def to_dict(self) -> dict:
@@ -44,7 +45,7 @@ def id3_algo(data, feature_cols, target_col) -> DecisionTreeNode:
     Parameters
     ----------
     data : pd.DataFrame
-        Dataframe containing all data
+        Dataframe containing all data remaining
     feature_cols : List[str]
         List of feature columns
     target_col : str
@@ -59,7 +60,10 @@ def id3_algo(data, feature_cols, target_col) -> DecisionTreeNode:
 
     # If no more features to split on, return most common classification
     if len(feature_cols) == 0:
-        return DecisionTreeNode(value=data[target_col].value_counts().idxmax())
+        idx_max = data[target_col].value_counts().idxmax()
+        num_occurs = data[data[target_col]=idx_max].shape[0]
+        conf = num_occurs / data[target_col].shape[0]
+        return DecisionTreeNode(value=idx_max, confidence=conf)
 
     # Pick best feature to split on
     best_feature = helper.pick_best_feature(data, target_col, feature_cols)
