@@ -1,6 +1,10 @@
 # siamak-test
 A test for sample work from David R. Winer (drwiner131 at gmail)
 
+This work was done in less than 3 hours as part of a coding test. 
+
+Assignment: Write a general purpose decision tree classifier from scratch without using any machine learning libraries, ChatGPT, or code from others. Use the attached toy data set file to try out your classifier to predict the name of an animal based on its number of legs and color.
+
 ## Setup:
 #### Using python 3.9.6
 ```
