@@ -1,4 +1,4 @@
-# siamak-test
+# 3 Hour Python Coding Challenge 
 A test for sample work from David R. Winer (drwiner131 at gmail)
 
 This work was done in less than 3 hours as part of a coding test. 
